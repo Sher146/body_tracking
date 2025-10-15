@@ -1,29 +1,52 @@
 #!/bin/bash
 
-# ¶¨Òå¾µÏñÃû³ÆºÍ±êÇ©
+# å®šä¹‰é•œåƒåç§°å’Œæ ‡ç­¾
 IMAGE_NAME="body_tracking"
 IMAGE_TAG="latest"
 
-# ¼ì²é¾µÏñÊÇ·ñ´æÔÚ
+# æ£€æŸ¥é•œåƒæ˜¯å¦å­˜åœ¨
 if ! docker images --format "table {{.Repository}}:{{.Tag}}" | grep -q "${IMAGE_NAME}:${IMAGE_TAG}"; then
-    echo "Docker ¾µÏñ ${IMAGE_NAME}:${IMAGE_TAG} ²»´æÔÚ£¬¿ªÊ¼¹¹½¨..."
+    echo "Docker é•œåƒ ${IMAGE_NAME}:${IMAGE_TAG} ä¸å­˜åœ¨ï¼Œå¼€å§‹æ„å»º..."
     chmod +x build_image.sh
     ./build_image.sh
     if [ $? -ne 0 ]; then
-        echo "¾µÏñ¹¹½¨Ê§°Ü£¬ÍË³ö¡£"
+        echo "é•œåƒæ„å»ºå¤±è´¥ï¼Œé€€å‡ºã€‚"
         exit 1
     fi
 fi
 
-echo "Æô¶¯ Docker ÈİÆ÷..."
+echo "å¯åŠ¨ Docker å®¹å™¨..."
 
-# ÔËĞĞÈİÆ÷£¬Ö§³Ö¹ÒÔØ±¾µØÄ£ĞÍÎÄ¼şºÍÅäÖÃ
-docker run --platform linux/arm64 \
+# åˆå§‹åŒ–è®¾å¤‡æ˜ å°„å˜é‡
+DEVICE_MAPPINGS=""
+
+# æ£€æŸ¥å¹¶æ·»åŠ  GPU è®¾å¤‡æ˜ å°„
+if [ -e /dev/dri/renderD129 ]; then
+    echo "æ£€æµ‹åˆ° GPU è®¾å¤‡: /dev/dri/renderD129"
+    DEVICE_MAPPINGS="$DEVICE_MAPPINGS -v /dev/dri/renderD129:/dev/dri/renderD129 --device /dev/dri/renderD129"
+else
+    echo "è­¦å‘Š: æœªæ£€æµ‹åˆ° GPU è®¾å¤‡ /dev/dri/renderD129ï¼ŒRKNN å¯èƒ½æ— æ³•ä½¿ç”¨ç¡¬ä»¶åŠ é€Ÿ"
+fi
+
+# æ£€æŸ¥å¹¶æ·»åŠ è®¾å¤‡æ ‘æ–‡ä»¶æ˜ å°„
+if [ -e /proc/device-tree/compatible ]; then
+    echo "æ£€æµ‹åˆ°è®¾å¤‡æ ‘æ–‡ä»¶: /proc/device-tree/compatible"
+    DEVICE_MAPPINGS="$DEVICE_MAPPINGS -v /proc/device-tree/compatible:/proc/device-tree/compatible"
+else
+    echo "è­¦å‘Š: æœªæ£€æµ‹åˆ°è®¾å¤‡æ ‘æ–‡ä»¶ /proc/device-tree/compatible"
+fi
+
+# æ„å»ºå®Œæ•´çš„ docker run å‘½ä»¤
+DOCKER_CMD="docker run --platform linux/arm64 \
     -it \
     --rm \
     --name body_tracking_container \
-    -v $(pwd)/app/models:/app/app/models \
-    -v $(pwd)/output:/app/output \
-    ${IMAGE_NAME}:${IMAGE_TAG}
+    -v \$(pwd)/app/models:/app/app/models \
+    -v \$(pwd)/output:/app/output \
+    $DEVICE_MAPPINGS \
+    ${IMAGE_NAME}:${IMAGE_TAG}"
 
-echo "ÈİÆ÷ÒÑÍË³ö¡£"
+echo "æ‰§è¡Œå‘½ä»¤: $DOCKER_CMD"
+eval $DOCKER_CMD
+
+echo "å®¹å™¨å·²é€€å‡ºã€‚"
