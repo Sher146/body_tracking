@@ -1,17 +1,17 @@
-# Ê¹ÓÃ¹Ù·½ Python ¾µÏñ×÷Îª»ù´¡¾µÏñ£¬¸üĞÂÎª Debian Bullseye
+# ä½¿ç”¨å®˜æ–¹ Python é•œåƒä½œä¸ºåŸºç¡€é•œåƒï¼Œæ›´æ–°ä¸º Debian Bullseye
 FROM python:3.11-slim-bullseye
 
-# ÉèÖÃ¹¤×÷Ä¿Â¼
+# è®¾ç½®å·¥ä½œç›®å½•
 WORKDIR /app
 
-# ¸ü»» Debian ¾µÏñÔ´Îª°¢ÀïÔÆ£¬ÒÔ½â¾öÏÂÔØÎÊÌâ
+# æ›´æ¢ Debian é•œåƒæºä¸ºé˜¿é‡Œäº‘ï¼Œä»¥è§£å†³ä¸‹è½½é—®é¢˜
 RUN cp /etc/apt/sources.list /etc/apt/sources.list.bak && \
     echo "deb http://mirrors.aliyun.com/debian/ bullseye main contrib non-free" > /etc/apt/sources.list && \
     echo "deb http://mirrors.aliyun.com/debian/ bullseye-updates main contrib non-free" >> /etc/apt/sources.list && \
     echo "deb http://mirrors.aliyun.com/debian-security/ bullseye-security main contrib non-free" >> /etc/apt/sources.list
-    # ÒÆ³ıÁË bullseye-backports ²Ö¿â
+    # ç§»é™¤äº† bullseye-backports ä»“åº“
 
-# °²×°ÏµÍ³ÒÀÀµ£¬°üÀ¨ OpenCV ËùĞèµÄ¿â
+# å®‰è£…ç³»ç»Ÿä¾èµ–ï¼ŒåŒ…æ‹¬ OpenCV æ‰€éœ€çš„åº“
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
@@ -22,28 +22,28 @@ RUN apt-get update && \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-# ¸´ÖÆ requirements.txt ²¢°²×° Python ÒÀÀµ
+# å¤åˆ¶ requirements.txt å¹¶å®‰è£… Python ä¾èµ–
 COPY rknn_whl/ ./rknn_whl/
 COPY requirements.txt .
 RUN pip install --no-cache-dir rknn_whl/rknn_toolkit_lite2-1.6.0-cp311-cp311-linux_aarch64.whl --target /usr/local/lib/python3.11/site-packages
 
-### RKNN SDK ÔËĞĞÊ±¿â¼¯³É ###
-# ÕâÒ»²½ĞèÒªÄúÊÖ¶¯½« RKNN SDK ÖĞÊÊÓÃÓÚ RK3566 µÄÔËĞĞÊ±¿âÎÄ¼ş
-# (ÀıÈç librknn_api.so, rknn_server µÈ) ¸´ÖÆµ½ÄúµÄÏîÄ¿Ä¿Â¼ÖĞ¡£
-# ½¨ÒéÔÚÏîÄ¿¸ùÄ¿Â¼´´½¨Ò»¸ö×ÓÎÄ¼ş¼Ğ£¬ÀıÈç 'rknn_sdk_libs'£¬²¢½«ËùÓĞÏà¹ØÎÄ¼ş·ÅÈëÆäÖĞ¡£
-# È»ºó£¬È¡Ïû×¢ÊÍ²¢ĞŞ¸ÄÒÔÏÂĞĞÒÔ¸´ÖÆÕâĞ©ÎÄ¼şµ½ÈİÆ÷ÖĞ¡£
-# ÀıÈç£º
+### RKNN SDK è¿è¡Œæ—¶åº“é›†æˆ ###
+# è¿™ä¸€æ­¥éœ€è¦æ‚¨æ‰‹åŠ¨å°† RKNN SDK ä¸­é€‚ç”¨äº RK3566 çš„è¿è¡Œæ—¶åº“æ–‡ä»¶
+# (ä¾‹å¦‚ librknn_api.so, rknn_server ç­‰) å¤åˆ¶åˆ°æ‚¨çš„é¡¹ç›®ç›®å½•ä¸­ã€‚
+# å»ºè®®åœ¨é¡¹ç›®æ ¹ç›®å½•åˆ›å»ºä¸€ä¸ªå­æ–‡ä»¶å¤¹ï¼Œä¾‹å¦‚ 'rknn_sdk_libs'ï¼Œå¹¶å°†æ‰€æœ‰ç›¸å…³æ–‡ä»¶æ”¾å…¥å…¶ä¸­ã€‚
+# ç„¶åï¼Œå–æ¶ˆæ³¨é‡Šå¹¶ä¿®æ”¹ä»¥ä¸‹è¡Œä»¥å¤åˆ¶è¿™äº›æ–‡ä»¶åˆ°å®¹å™¨ä¸­ã€‚
+# ä¾‹å¦‚ï¼š
 # COPY rknn_sdk_libs/ /usr/local/lib/
 # RUN ldconfig
 
-# Èç¹û RKNN ÔËĞĞÊ±¿âĞèÒªÌØ¶¨µÄ»·¾³±äÁ¿£¬ÇëÔÚ´Ë´¦ÉèÖÃ
-# ÀıÈç£º
+# å¦‚æœ RKNN è¿è¡Œæ—¶åº“éœ€è¦ç‰¹å®šçš„ç¯å¢ƒå˜é‡ï¼Œè¯·åœ¨æ­¤å¤„è®¾ç½®
+# ä¾‹å¦‚ï¼š
 # ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-### RKNN SDK ÔËĞĞÊ±¿â¼¯³É½áÊø ###
+### RKNN SDK è¿è¡Œæ—¶åº“é›†æˆç»“æŸ ###
 
-# ¸´ÖÆÓ¦ÓÃ³ÌĞò´úÂëºÍÄ£ĞÍÎÄ¼ş
+# å¤åˆ¶åº”ç”¨ç¨‹åºä»£ç å’Œæ¨¡å‹æ–‡ä»¶
 COPY app/ ./app/
 
-# ¶¨ÒåÈİÆ÷Æô¶¯Ê±Ö´ĞĞµÄÃüÁî
-# Ä¬ÈÏÔËĞĞ main.py£¬ÓÃ»§¿ÉÒÔÍ¨¹ı Docker run ÃüÁî¸²¸Ç´Ë²ÎÊı
+# å®šä¹‰å®¹å™¨å¯åŠ¨æ—¶æ‰§è¡Œçš„å‘½ä»¤
+# é»˜è®¤è¿è¡Œ main.pyï¼Œç”¨æˆ·å¯ä»¥é€šè¿‡ Docker run å‘½ä»¤è¦†ç›–æ­¤å‚æ•°
 CMD ["python", "app/main.py"]
