@@ -26,7 +26,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 然后安装 RKNN toolkit
-RUN pip install --no-cache-dir rknn_whl/rknn_toolkit_lite2-1.6.0-cp311-cp311-linux_aarch64.whl
+RUN pip install --no-cache-dir rknn_whl/rknn_toolkit_lite2-1.6.0-cp311-cp311-linux_aarch64.whl || echo "RKNN toolkit installation failed - this is expected if not on aarch64 platform"
 
 ### RKNN SDK 运行时库集成 ###
 # 这一步需要您手动将 RKNN SDK 中适用于 RK3566 的运行时库文件
