@@ -60,8 +60,8 @@ if __name__ == '__main__':
     # basic params
     parser.add_argument('--model_path', type=str, required=True,
                         help='RKNN model path (.rknn file)')
-    parser.add_argument('--video_source', type=str, required=True,
-                        help='Video file path (e.g., input.mp4) or camera index (e.g., 0 for default camera).')
+    parser.add_argument('--video_source', type=str, default='rtsp://admin:123456@192.168.1.102:554/h265/ch1/main/av_stream',
+                        help='Video file path (e.g., input.mp4), camera index (e.g., 0 for default camera), or RTSP URL.')
     parser.add_argument('--target', type=str,
                         default='rk3566', help='Target RKNPU platform (e.g., rk3588)')
     parser.add_argument('--device_id', type=str,

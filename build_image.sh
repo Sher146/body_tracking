@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# ¶¨Òå¾µÏñÃû³ÆºÍ±êÇ©
+# å®šä¹‰é•œåƒåç§°å’Œæ ‡ç­¾
 IMAGE_NAME="body_tracking"
 IMAGE_TAG="latest"
 
-# ¹¹½¨ Docker ¾µÏñ
-echo "¿ªÊ¼¹¹½¨ Docker ¾µÏñ: ${IMAGE_NAME}:${IMAGE_TAG}"
-docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+# æ„å»º Docker é•œåƒ
+echo "å¼€å§‹æ„å»º Docker é•œåƒ: ${IMAGE_NAME}:${IMAGE_TAG}"
+docker build --platform linux/arm64 -t ${IMAGE_NAME}:${IMAGE_TAG} .
 
 if [ $? -eq 0 ]; then
-    echo "Docker ¾µÏñ¹¹½¨³É¹¦: ${IMAGE_NAME}:${IMAGE_TAG}"
+    echo "Docker é•œåƒæ„å»ºæˆåŠŸ: ${IMAGE_NAME}:${IMAGE_TAG}"
 else
-    echo "Docker ¾µÏñ¹¹½¨Ê§°Ü¡£"
+    echo "Docker é•œåƒæ„å»ºå¤±è´¥ã€‚"
     exit 1
 fi
