@@ -1,56 +1,73 @@
-# RKNN Ä£¿é´íÎó½â¾ö·½°¸
+# RKNN æ¨¡å—é”™è¯¯è§£å†³æ–¹æ¡ˆ
 
-## ÎÊÌâÃèÊö
-ÔËĞĞÊ±³öÏÖ `ModuleNotFoundError: No module named 'rknn'` ´íÎó¡£
+## é—®é¢˜æè¿°
+è¿è¡Œæ—¶å‡ºç° `ModuleNotFoundError: No module named 'rknn'` é”™è¯¯ã€‚
 
-## ¸ù±¾Ô­Òò
-RKNN (Rockchip Neural Network) ¹¤¾ß°üÖ»ÄÜÔÚ Linux aarch64 ¼Ü¹¹ÉÏÔËĞĞ£¬²»ÄÜÖ±½ÓÔÚ Windows »òÆäËû¼Ü¹¹ÉÏ°²×°¡£
+## æ ¹æœ¬åŸå› 
+1. RKNN (Rockchip Neural Network) å·¥å…·åŒ…åªèƒ½åœ¨ Linux aarch64 æ¶æ„ä¸Šè¿è¡Œï¼Œä¸èƒ½ç›´æ¥åœ¨ Windows æˆ–å…¶ä»–æ¶æ„ä¸Šå®‰è£…ã€‚
+2. å®‰è£…çš„ RKNN toolkit lite2 åŒ…ä½¿ç”¨çš„æ˜¯ `rknnlite.api.RKNNLite` ç±»ï¼Œè€Œä¸æ˜¯ `rknn.api.RKNN`ã€‚
+3. Python æ¨¡å—å¯¼å…¥è·¯å¾„é—®é¢˜ã€‚
 
-## ½â¾ö·½°¸
+## å·²å®æ–½çš„è§£å†³æ–¹æ¡ˆ
 
-### ·½·¨ 1£ºÊ¹ÓÃ Docker ÈİÆ÷£¨ÍÆ¼ö£©
+### ä¿®å¤å†…å®¹
+1. **Dockerfile ä¿®å¤**ï¼š
+   - æ·»åŠ äº† `--platform=linux/arm64` å‚æ•°ç¡®ä¿ä½¿ç”¨æ­£ç¡®çš„æ¶æ„
+   - ç§»é™¤äº† RKNN å®‰è£…çš„å®¹é”™æœºåˆ¶ï¼Œç¡®ä¿å®‰è£…å¤±è´¥æ—¶èƒ½åŠæ—¶å‘ç°é—®é¢˜
 
-#### Ç°ÌáÌõ¼ş
-1. °²×°²¢Æô¶¯ Docker Desktop
-2. È·±£ÄúµÄÏµÍ³Ö§³ÖÔËĞĞ ARM64 ÈİÆ÷
+2. **ä»£ç å¯¼å…¥ä¿®å¤**ï¼š
+   - å°† `from rknn.api import RKNN` æ”¹ä¸º `from rknnlite.api import RKNNLite as RKNN`
+   - å°† `from app.utils.detection_utils import` æ”¹ä¸º `from utils.detection_utils import`
 
-#### ²½Öè
-1. **¹¹½¨ Docker ¾µÏñ**£º
+3. **éªŒè¯ç»“æœ**ï¼š
+   - RKNN æ¨¡å—ç°åœ¨å¯ä»¥æ­£ç¡®å¯¼å…¥å’Œåˆå§‹åŒ–
+   - åº”ç”¨ç¨‹åºå¯ä»¥æ­£å¸¸å¯åŠ¨å¹¶æ˜¾ç¤ºå¸®åŠ©ä¿¡æ¯
+
+## è§£å†³æ–¹æ¡ˆ
+
+### æ–¹æ³• 1ï¼šä½¿ç”¨ Docker å®¹å™¨ï¼ˆæ¨èï¼‰
+
+#### å‰ææ¡ä»¶
+1. å®‰è£…å¹¶å¯åŠ¨ Docker Desktop
+2. ç¡®ä¿æ‚¨çš„ç³»ç»Ÿæ”¯æŒè¿è¡Œ ARM64 å®¹å™¨
+
+#### æ­¥éª¤
+1. **æ„å»º Docker é•œåƒ**ï¼š
    ```bash
-   # ÔÚ Windows ÉÏ
+   # åœ¨ Windows ä¸Š
    build_image.sh
    
-   # »òÕßÊ¹ÓÃ PowerShell
+   # æˆ–è€…ä½¿ç”¨ PowerShell
    docker build --platform linux/arm64 -t body_tracking:latest .
    ```
 
-2. **ÔËĞĞÈİÆ÷**£º
+2. **è¿è¡Œå®¹å™¨**ï¼š
    ```bash
-   # Windows Åú´¦Àí½Å±¾
+   # Windows æ‰¹å¤„ç†è„šæœ¬
    run_container.bat
    
-   # »òÕßÊÖ¶¯ÔËĞĞ
+   # æˆ–è€…æ‰‹åŠ¨è¿è¡Œ
    docker run --platform linux/arm64 -it --rm ^
      -v %cd%\app\models:/app/app/models ^
      -v %cd%\output:/app/output ^
      body_tracking:latest
    ```
 
-### ·½·¨ 2£ºÊÖ¶¯°²×°£¨½öÊÊÓÃÓÚ Linux aarch64£©
+### æ–¹æ³• 2ï¼šæ‰‹åŠ¨å®‰è£…ï¼ˆä»…é€‚ç”¨äº Linux aarch64ï¼‰
 
-Èç¹ûÄúÔÚ RK3566 ¿ª·¢°åÉÏÖ±½ÓÔËĞĞ£º
+å¦‚æœæ‚¨åœ¨ RK3566 å¼€å‘æ¿ä¸Šç›´æ¥è¿è¡Œï¼š
 
 ```bash
-# °²×° RKNN toolkit
+# å®‰è£… RKNN toolkit
 pip install rknn_toolkit_lite2-1.6.0-cp311-cp311-linux_aarch64.whl
 
-# »òÕß´ÓÔ´Âë°²×°£¨Èç¹ûÓĞÔ´Âë£©
+# æˆ–è€…ä»æºç å®‰è£…ï¼ˆå¦‚æœæœ‰æºç ï¼‰
 # pip install rknn_toolkit_lite2
 ```
 
-### ·½·¨ 3£ºĞŞ¸Ä´úÂëÒÔÖ§³ÖÄ£Äâ»·¾³£¨¿ª·¢²âÊÔÓÃ£©
+### æ–¹æ³• 3ï¼šä¿®æ”¹ä»£ç ä»¥æ”¯æŒæ¨¡æ‹Ÿç¯å¢ƒï¼ˆå¼€å‘æµ‹è¯•ç”¨ï¼‰
 
-Èç¹ûÄúÖ»ÊÇÏë²âÊÔ´úÂëÂß¼­¶ø²»ĞèÒªÊµ¼ÊµÄ RKNN ÍÆÀí£º
+å¦‚æœæ‚¨åªæ˜¯æƒ³æµ‹è¯•ä»£ç é€»è¾‘è€Œä¸éœ€è¦å®é™…çš„ RKNN æ¨ç†ï¼š
 
 ```python
 try:
@@ -69,7 +86,7 @@ except ImportError:
                 print(f"Mock initializing runtime for target: {target}")
             return 0
         def inference(self, inputs):
-            # ·µ»ØÄ£ÄâÊı¾İ
+            # è¿”å›æ¨¡æ‹Ÿæ•°æ®
             import numpy as np
             return [np.zeros((1, 56, 8, 8)), np.zeros((1, 56, 16, 16)), np.zeros((1, 56, 32, 32)), np.zeros((1, 51, 17, 17))]
         def release(self):
@@ -77,54 +94,54 @@ except ImportError:
                 print("Mock releasing RKNN")
 ```
 
-## ÑéÖ¤°²×°
+## éªŒè¯å®‰è£…
 
-### ÔÚ Docker ÈİÆ÷ÖĞÑéÖ¤
+### åœ¨ Docker å®¹å™¨ä¸­éªŒè¯
 ```bash
-# ½øÈëÈİÆ÷
+# è¿›å…¥å®¹å™¨
 docker run --platform linux/arm64 -it body_tracking:latest /bin/bash
 
-# ¼ì²é RKNN Ä£¿é
+# æ£€æŸ¥ RKNN æ¨¡å—
 python -c "from rknn.api import RKNN; print('RKNN module imported successfully')"
 ```
 
-### ¼ì²éÏµÍ³¼Ü¹¹
+### æ£€æŸ¥ç³»ç»Ÿæ¶æ„
 ```bash
-# ¼ì²éµ±Ç°ÏµÍ³¼Ü¹¹
+# æ£€æŸ¥å½“å‰ç³»ç»Ÿæ¶æ„
 uname -m
 
-# ¼ì²é Python °æ±¾
+# æ£€æŸ¥ Python ç‰ˆæœ¬
 python --version
 ```
 
-## ³£¼ûÎÊÌâ
+## å¸¸è§é—®é¢˜
 
-### Q: ÎªÊ²Ã´²»ÄÜÖ±½ÓÔÚ Windows ÉÏ°²×° RKNN£¿
-A: RKNN ÊÇ Rockchip ¹«Ë¾ÎªÆä ARM ´¦ÀíÆ÷¿ª·¢µÄ×¨ÓÃÍÆÀí¹¤¾ß°ü£¬Ö»ÄÜÔÚ Linux aarch64 »·¾³ÖĞÔËĞĞ¡£
+### Q: ä¸ºä»€ä¹ˆä¸èƒ½ç›´æ¥åœ¨ Windows ä¸Šå®‰è£… RKNNï¼Ÿ
+A: RKNN æ˜¯ Rockchip å…¬å¸ä¸ºå…¶ ARM å¤„ç†å™¨å¼€å‘çš„ä¸“ç”¨æ¨ç†å·¥å…·åŒ…ï¼Œåªèƒ½åœ¨ Linux aarch64 ç¯å¢ƒä¸­è¿è¡Œã€‚
 
-### Q: Docker ¹¹½¨Ê§°ÜÔõÃ´°ì£¿
-A: È·±££º
-1. Docker Desktop ÕıÔÚÔËĞĞ
-2. Ö§³Ö `--platform linux/arm64` ²ÎÊı
-3. ÍøÂçÁ¬½ÓÕı³££¨ÓÃÓÚÏÂÔØÒÀÀµ£©
+### Q: Docker æ„å»ºå¤±è´¥æ€ä¹ˆåŠï¼Ÿ
+A: ç¡®ä¿ï¼š
+1. Docker Desktop æ­£åœ¨è¿è¡Œ
+2. æ”¯æŒ `--platform linux/arm64` å‚æ•°
+3. ç½‘ç»œè¿æ¥æ­£å¸¸ï¼ˆç”¨äºä¸‹è½½ä¾èµ–ï¼‰
 
-### Q: ÈİÆ÷ÔËĞĞÊ±ÈÔÈ»ÌáÊ¾ÕÒ²»µ½ RKNN Ä£¿é£¿
-A: ¼ì²é£º
-1. ÊÇ·ñÊ¹ÓÃÁËÕıÈ·µÄÆ½Ì¨²ÎÊı `--platform linux/arm64`
-2. wheel ÎÄ¼şÊÇ·ñÕıÈ·¸´ÖÆµ½ÈİÆ÷ÖĞ
-3. ¹¹½¨¹ı³ÌÖĞÊÇ·ñÓĞ´íÎóĞÅÏ¢
+### Q: å®¹å™¨è¿è¡Œæ—¶ä»ç„¶æç¤ºæ‰¾ä¸åˆ° RKNN æ¨¡å—ï¼Ÿ
+A: æ£€æŸ¥ï¼š
+1. æ˜¯å¦ä½¿ç”¨äº†æ­£ç¡®çš„å¹³å°å‚æ•° `--platform linux/arm64`
+2. wheel æ–‡ä»¶æ˜¯å¦æ­£ç¡®å¤åˆ¶åˆ°å®¹å™¨ä¸­
+3. æ„å»ºè¿‡ç¨‹ä¸­æ˜¯å¦æœ‰é”™è¯¯ä¿¡æ¯
 
-## ÏîÄ¿ÎÄ¼şËµÃ÷
+## é¡¹ç›®æ–‡ä»¶è¯´æ˜
 
-- `Dockerfile`: °üº¬ RKNN Ä£¿é°²×°ÅäÖÃ
-- `rknn_toolkit_lite2-1.6.0-cp311-cp311-linux_aarch64.whl`: RKNN ¹¤¾ß°ü°²×°ÎÄ¼ş
-- `build_image.sh`: Docker ¾µÏñ¹¹½¨½Å±¾
-- `run_container.bat`: Windows ÈİÆ÷Æô¶¯½Å±¾
-- `run_container.sh`: Linux/Mac ÈİÆ÷Æô¶¯½Å±¾
+- `Dockerfile`: åŒ…å« RKNN æ¨¡å—å®‰è£…é…ç½®
+- `rknn_toolkit_lite2-1.6.0-cp311-cp311-linux_aarch64.whl`: RKNN å·¥å…·åŒ…å®‰è£…æ–‡ä»¶
+- `build_image.sh`: Docker é•œåƒæ„å»ºè„šæœ¬
+- `run_container.bat`: Windows å®¹å™¨å¯åŠ¨è„šæœ¬
+- `run_container.sh`: Linux/Mac å®¹å™¨å¯åŠ¨è„šæœ¬
 
-## ÁªÏµÖ§³Ö
+## è”ç³»æ”¯æŒ
 
-Èç¹ûÎÊÌâÈÔÈ»´æÔÚ£¬Çë¼ì²é£º
-1. Docker Desktop ÈÕÖ¾
-2. ÈİÆ÷¹¹½¨ÈÕÖ¾
-3. ÏµÍ³¼Ü¹¹¼æÈİĞÔ
+å¦‚æœé—®é¢˜ä»ç„¶å­˜åœ¨ï¼Œè¯·æ£€æŸ¥ï¼š
+1. Docker Desktop æ—¥å¿—
+2. å®¹å™¨æ„å»ºæ—¥å¿—
+3. ç³»ç»Ÿæ¶æ„å…¼å®¹æ€§

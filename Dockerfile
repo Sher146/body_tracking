@@ -1,5 +1,5 @@
-# 使用官方 Python 镜像作为基础镜像，更新为 Debian Bullseye
-FROM python:3.11-slim
+# 使用官方 Python 镜像作为基础镜像，指定 ARM64 平台
+FROM --platform=linux/arm64 python:3.11-slim
 # 设置工作目录
 WORKDIR /app
 
@@ -26,7 +26,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 然后安装 RKNN toolkit
-RUN pip install --no-cache-dir rknn_whl/rknn_toolkit_lite2-1.6.0-cp311-cp311-linux_aarch64.whl || echo "RKNN toolkit installation failed - this is expected if not on aarch64 platform"
+RUN pip install --no-cache-dir rknn_whl/rknn_toolkit_lite2-1.6.0-cp311-cp311-linux_aarch64.whl
 
 ### RKNN SDK 运行时库集成 ###
 # 这一步需要您手动将 RKNN SDK 中适用于 RK3566 的运行时库文件

@@ -6,8 +6,8 @@ import numpy as np
 import argparse
 import cv2
 
-from rknn.api import RKNN
-from app.utils.detection_utils import DetectBox, IOU, NMS, sigmoid, softmax, process
+from rknnlite.api import RKNNLite as RKNN
+from utils.detection_utils import DetectBox, IOU, NMS, sigmoid, softmax, process
 
 CLASSES = ['person']
 
@@ -19,7 +19,7 @@ def letterbox_resize(image, size, bg_color):
     :param bg_color: background filling data 
     :return: processed image
     """
-    # È·±£ÊäÈëÊÇÍ¼ÏñÊı×é£¬¶ø²»ÊÇÎÄ¼şÂ·¾¶£¨ÊÓÆµÄ£Ê½ÏÂÒÑ¾­ÊÇÖ¡Êı×é£©
+    # ç¡®ä¿è¾“å…¥æ˜¯å›¾åƒæ•°ç»„ï¼Œè€Œä¸æ˜¯æ–‡ä»¶è·¯å¾„ï¼ˆè§†é¢‘æ¨¡å¼ä¸‹å·²ç»æ˜¯å¸§æ•°ç»„ï¼‰
     if image is None:
         print("Error: Input image (frame) is None.")
         sys.exit(1)
@@ -42,17 +42,17 @@ def letterbox_resize(image, size, bg_color):
     result_image[offset_y:offset_y + new_height, offset_x:offset_x + new_width] = image
     return result_image, aspect_ratio, offset_x, offset_y
 
-# ×ËÌ¬¹À¼Æµ÷É«°å£¬ÓÃÓÚ¹Ø¼üµãºÍ¹Ç¼ÜµÄÑÕÉ«
+# å§¿æ€ä¼°è®¡è°ƒè‰²æ¿ï¼Œç”¨äºå…³é”®ç‚¹å’Œéª¨æ¶çš„é¢œè‰²
 pose_palette = np.array([[255, 128, 0], [255, 153, 51], [255, 178, 102], [230, 230, 0], [255, 153, 255],
                          [153, 204, 255], [255, 102, 255], [255, 51, 255], [102, 178, 255], [51, 153, 255],
                          [255, 153, 153], [255, 102, 102], [255, 51, 51], [153, 255, 153], [102, 255, 102],
                          [51, 255, 51], [0, 255, 0], [0, 0, 255], [255, 0, 0], [255, 255, 255]],dtype=np.uint8)
-# 17¸ö¹Ø¼üµãµÄÑÕÉ«
+# 17ä¸ªå…³é”®ç‚¹çš„é¢œè‰²
 kpt_color  = pose_palette[[16, 16, 16, 16, 16, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9]]
-# ¹Ç¼ÜÁ¬½Ó¹ØÏµ (COCO¸ñÊ½µÄ17¸ö¹Ø¼üµãË÷Òı£¬´Ó1¿ªÊ¼)
+# éª¨æ¶è¿æ¥å…³ç³» (COCOæ ¼å¼çš„17ä¸ªå…³é”®ç‚¹ç´¢å¼•ï¼Œä»1å¼€å§‹)
 skeleton = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13], [6, 7], [6, 8], 
             [7, 9], [8, 10], [9, 11], [2, 3], [1, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7]]
-# ¹Ç¼ÜÁ¬ÏßµÄÑÕÉ«
+# éª¨æ¶è¿çº¿çš„é¢œè‰²
 limb_color = pose_palette[[9, 9, 9, 9, 7, 7, 7, 0, 0, 0, 0, 0, 16, 16, 16, 16, 16, 16, 16]]
 
 if __name__ == '__main__':
@@ -80,13 +80,13 @@ if __name__ == '__main__':
                         help='Keypoint confidence threshold for drawing.')
     args = parser.parse_args()
 
-    # ½âÎöÊäÈë³ß´ç
+    # è§£æè¾“å…¥å°ºå¯¸
     input_size = tuple(map(int, args.input_size.split(',')))
     if len(input_size) != 2:
         print("Error: --input_size must be in format 'width,height'.")
         sys.exit(1)
 
-    # --- RKNN ³õÊ¼»¯ºÍ¼ÓÔØ ---
+    # --- RKNN åˆå§‹åŒ–å’ŒåŠ è½½ ---
     rknn = RKNN(verbose=True)
 
     # Load RKNN model
@@ -105,9 +105,9 @@ if __name__ == '__main__':
         exit(ret)
     print('Runtime initialized successfully.')
 
-    # --- ÊÓÆµÁ÷³õÊ¼»¯ ---
+    # --- è§†é¢‘æµåˆå§‹åŒ– ---
     try:
-        # ³¢ÊÔ½«ÊäÈë½âÎöÎªÕûÊı (ÉãÏñÍ·Ë÷Òı) »ò×Ö·û´® (ÊÓÆµÎÄ¼şÂ·¾¶)
+        # å°è¯•å°†è¾“å…¥è§£æä¸ºæ•´æ•° (æ‘„åƒå¤´ç´¢å¼•) æˆ–å­—ç¬¦ä¸² (è§†é¢‘æ–‡ä»¶è·¯å¾„)
         source = int(args.video_source)
     except ValueError:
         source = args.video_source
@@ -118,19 +118,19 @@ if __name__ == '__main__':
         rknn.release()
         sys.exit(1)
     
-    # »ñÈ¡ÊÓÆµÊôĞÔ
+    # è·å–è§†é¢‘å±æ€§
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = cap.get(cv2.CAP_PROP_FPS) or 30 # Ä¬ÈÏ 30 FPS
+    fps = cap.get(cv2.CAP_PROP_FPS) or 30 # é»˜è®¤ 30 FPS
     
-    # ³õÊ¼»¯ÊÓÆµĞ´Èë¶ÔÏó (Èç¹ûĞèÒª±£´æÊÓÆµ)
+    # åˆå§‹åŒ–è§†é¢‘å†™å…¥å¯¹è±¡ (å¦‚æœéœ€è¦ä¿å­˜è§†é¢‘)
     out_writer = None
     if args.output_video_path:
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v') # Ê¹ÓÃ mp4v ±àÂëÆ÷
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v') # ä½¿ç”¨ mp4v ç¼–ç å™¨
         out_writer = cv2.VideoWriter(args.output_video_path, fourcc, fps, (frame_width, frame_height))
         print(f"Output video will be saved to {args.output_video_path}")
 
-    # --- ÊÓÆµ´¦ÀíÑ­»· ---
+    # --- è§†é¢‘å¤„ç†å¾ªç¯ ---
     print('--> Starting video stream processing. Press "q" to exit.')
     
     frame_count = 0
@@ -142,24 +142,24 @@ if __name__ == '__main__':
             print("End of video stream or error reading frame.")
             break
         
-        # Ô¤´¦Àí£ºletterboxËõ·Å (×¢Òâ£ºÕâÀïÊ¹ÓÃimg×÷ÎªÊäÈë£¬ÒòÎªËüÒÑ¾­ÊÇBGR¸ñÊ½µÄÖ¡)
+        # é¢„å¤„ç†ï¼šletterboxç¼©æ”¾ (æ³¨æ„ï¼šè¿™é‡Œä½¿ç”¨imgä½œä¸ºè¾“å…¥ï¼Œå› ä¸ºå®ƒå·²ç»æ˜¯BGRæ ¼å¼çš„å¸§)
         letterbox_img, aspect_ratio, offset_x, offset_y = letterbox_resize(img, input_size, args.bg_color)
-        infer_img = letterbox_img[..., ::-1]  # BGR2RGB (RKNNÄ£ĞÍÍ¨³£ĞèÒªRGBÊäÈë)
+        infer_img = letterbox_img[..., ::-1]  # BGR2RGB (RKNNæ¨¡å‹é€šå¸¸éœ€è¦RGBè¾“å…¥)
 
         # Inference
         results = rknn.inference(inputs=[infer_img]) 
 
-        # --- ºó´¦ÀíºÍNMS ---
+        # --- åå¤„ç†å’ŒNMS ---
         outputs=[]
-        keypoints_raw=results[3] # ¹Ø¼üµãÔ­Ê¼Êä³ö
+        keypoints_raw=results[3] # å…³é”®ç‚¹åŸå§‹è¾“å‡º
         
-        # ½âÎö¼ì²â¿òºÍ¹Ø¼üµã
+        # è§£ææ£€æµ‹æ¡†å’Œå…³é”®ç‚¹
         for x in results[:3]:
             index,stride=0,0
-            # ¸ù¾İÌØÕ÷Í¼´óĞ¡È·¶¨²½³¤ºÍË÷Òı
+            # æ ¹æ®ç‰¹å¾å›¾å¤§å°ç¡®å®šæ­¥é•¿å’Œç´¢å¼•
             if x.shape[2]==20: # 32x32 feature map, stride=32
                 stride=32
-                # ÕâÀïµÄË÷Òı¼ÆËãÊÇÎªÁËÆ¥ÅäYOLOv8-PoseÄ£ĞÍÊä³öµÄË³Ğò
+                # è¿™é‡Œçš„ç´¢å¼•è®¡ç®—æ˜¯ä¸ºäº†åŒ¹é…YOLOv8-Poseæ¨¡å‹è¾“å‡ºçš„é¡ºåº
                 index=20*4*20*4+20*2*20*2
             if x.shape[2]==40: # 16x16 feature map, stride=16
                 stride=16
@@ -171,12 +171,12 @@ if __name__ == '__main__':
             output=process(feature,keypoints_raw,index,x.shape[3],x.shape[2],stride, objectThresh=args.obj_threshold)
             outputs=outputs+output
         
-        # NMS (·Ç¼«´óÖµÒÖÖÆ)
+        # NMS (éæå¤§å€¼æŠ‘åˆ¶)
         predbox = NMS(outputs, nmsThresh=args.nms_threshold)
 
-        # --- »æÖÆ¹Ø¼üµãºÍ¹Ç¼Ü ---
+        # --- ç»˜åˆ¶å…³é”®ç‚¹å’Œéª¨æ¶ ---
         for i in range(len(predbox)):
-            # 1. »Ö¸´±ß½ç¿òµ½Ô­Ê¼Í¼Ïñ³ß´ç
+            # 1. æ¢å¤è¾¹ç•Œæ¡†åˆ°åŸå§‹å›¾åƒå°ºå¯¸
             xmin = int((predbox[i].xmin-offset_x)/aspect_ratio)
             ymin = int((predbox[i].ymin-offset_y)/aspect_ratio)
             xmax = int((predbox[i].xmax-offset_x)/aspect_ratio)
@@ -184,66 +184,66 @@ if __name__ == '__main__':
             classId = predbox[i].classId
             score = predbox[i].score
             
-            # »æÖÆ±ß½ç¿ò
+            # ç»˜åˆ¶è¾¹ç•Œæ¡†
             cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
             title= CLASSES[classId] + f" {score:.2f}"
             cv2.putText(img, title, (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2, cv2.LINE_AA)
             
-            # 2. »Ö¸´¹Ø¼üµã×ø±êµ½Ô­Ê¼Í¼Ïñ³ß´ç
+            # 2. æ¢å¤å…³é”®ç‚¹åæ ‡åˆ°åŸå§‹å›¾åƒå°ºå¯¸
             keypoints =predbox[i].keypoint.reshape(-1, 3) # keypoint [x, y, conf]
             keypoints[...,0]=(keypoints[...,0]-offset_x)/aspect_ratio
             keypoints[...,1]=(keypoints[...,1]-offset_y)/aspect_ratio
 
-            # 3. »æÖÆ¹Ø¼üµã
+            # 3. ç»˜åˆ¶å…³é”®ç‚¹
             for k, keypoint in enumerate(keypoints):
                 x, y, conf = keypoint
-                # ¹Ø¼üµãÑÕÉ«
+                # å…³é”®ç‚¹é¢œè‰²
                 color_k = [int(c) for c in kpt_color[k]] 
-                # ½ö»æÖÆ¿É¼ûµÄ¹Ø¼üµã (×ø±ê·Ç0)
-                if x > 0 and y > 0 and conf > args.kpt_threshold: # Ê¹ÓÃÃüÁîĞĞ²ÎÊı
+                # ä»…ç»˜åˆ¶å¯è§çš„å…³é”®ç‚¹ (åæ ‡é0)
+                if x > 0 and y > 0 and conf > args.kpt_threshold: # ä½¿ç”¨å‘½ä»¤è¡Œå‚æ•°
                     cv2.circle(img, (int(x), int(y)), 5, color_k, -1, lineType=cv2.LINE_AA)
             
-            # 4. »æÖÆ¹Ç¼ÜÁ¬Ïß
+            # 4. ç»˜åˆ¶éª¨æ¶è¿çº¿
             for k, sk in enumerate(skeleton):
-                    # sk[0]-1 ºÍ sk[1]-1 ÊÇ¹Ø¼üµãÔÚkeypointsÊı×éÖĞµÄË÷Òı (ÒòÎªCOCO¹Ø¼üµã´Ó1¿ªÊ¼)
+                    # sk[0]-1 å’Œ sk[1]-1 æ˜¯å…³é”®ç‚¹åœ¨keypointsæ•°ç»„ä¸­çš„ç´¢å¼• (å› ä¸ºCOCOå…³é”®ç‚¹ä»1å¼€å§‹)
                     pos1 = (int(keypoints[(sk[0] - 1), 0]), int(keypoints[(sk[0] - 1), 1]))
                     pos2 = (int(keypoints[(sk[1] - 1), 0]), int(keypoints[(sk[1] - 1), 1]))
 
                     conf1 = keypoints[(sk[0] - 1), 2]
                     conf2 = keypoints[(sk[1] - 1), 2]
 
-                    # ½öÔÚÁ½¸ö¹Ø¼üµã¶¼ÓĞĞ§£¨×ø±ê·Ç0ÇÒÖÃĞÅ¶È¸ß£©Ê±»æÖÆÁ¬Ïß
+                    # ä»…åœ¨ä¸¤ä¸ªå…³é”®ç‚¹éƒ½æœ‰æ•ˆï¼ˆåæ ‡é0ä¸”ç½®ä¿¡åº¦é«˜ï¼‰æ—¶ç»˜åˆ¶è¿çº¿
                     if pos1[0] <= 0 or pos1[1] <= 0 or pos2[0] <= 0 or pos2[1] <= 0:
                         continue
-                    if conf1 < args.kpt_threshold or conf2 < args.kpt_threshold: # Ê¹ÓÃÃüÁîĞĞ²ÎÊı
+                    if conf1 < args.kpt_threshold or conf2 < args.kpt_threshold: # ä½¿ç”¨å‘½ä»¤è¡Œå‚æ•°
                         continue
                     
-                    # Á¬ÏßÑÕÉ«
+                    # è¿çº¿é¢œè‰²
                     limb_c = [int(c) for c in limb_color[k]]
                     cv2.line(img, pos1, pos2, limb_c, thickness=2, lineType=cv2.LINE_AA)
 
-        # Í³¼Æ FPS (Ã¿ 10 Ö¡¸üĞÂÒ»´Î)
+        # ç»Ÿè®¡ FPS (æ¯ 10 å¸§æ›´æ–°ä¸€æ¬¡)
         frame_count += 1
         if frame_count % 10 == 0:
             end_time = time.time()
             current_fps = 10 / (end_time - start_time)
             fps_text = f"FPS: {current_fps:.2f}"
             cv2.putText(img, fps_text, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-            start_time = end_time # ¼ò»¯FPS¼ÆËã
-            frame_count = 0 # ÖØÖÃÖ¡¼ÆÊı
+            start_time = end_time # ç®€åŒ–FPSè®¡ç®—
+            frame_count = 0 # é‡ç½®å¸§è®¡æ•°
 
-        # ÊµÊ±ÏÔÊ¾½á¹û
+        # å®æ—¶æ˜¾ç¤ºç»“æœ
         cv2.imshow("RKNN YOLOv8 Pose Demo", img)
         
-        # Ğ´ÈëÊÓÆµÎÄ¼ş (Èç¹ûÒÑÉèÖÃ)
+        # å†™å…¥è§†é¢‘æ–‡ä»¶ (å¦‚æœå·²è®¾ç½®)
         if out_writer:
             out_writer.write(img)
 
-        # ¼àÌı 'q' ¼üÍË³ö
+        # ç›‘å¬ 'q' é”®é€€å‡º
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    # --- ÊÍ·Å×ÊÔ´ ---
+    # --- é‡Šæ”¾èµ„æº ---
     cap.release()
     if out_writer:
         out_writer.release()
