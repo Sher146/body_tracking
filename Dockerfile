@@ -23,8 +23,9 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制 requirements.txt 并安装 Python 依赖
+COPY rknn_whl/ ./rknn_whl/
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt --no-deps --platform linux/aarch64 --target /usr/local/lib/python3.11/site-packages
+RUN pip install --no-cache-dir rknn_whl/rknn_toolkit_lite2-1.6.0-cp311-cp311-linux_aarch64.whl --target /usr/local/lib/python3.11/site-packages
 
 ### RKNN SDK 运行时库集成 ###
 # 这一步需要您手动将 RKNN SDK 中适用于 RK3566 的运行时库文件
