@@ -1,4 +1,4 @@
-numpy
-opencv-python
-rknn-toolkit2
-setuptools
+numpy==1.26.4
+opencv-python>=4.11.0.86
+rknn-toolkit==2.3.2
+setuptools>=80.9.0

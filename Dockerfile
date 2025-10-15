@@ -1,12 +1,20 @@
-# 使用官方 Python 镜像作为基础镜像
-FROM python:3.8-slim-buster
+# 使用官方 Python 镜像作为基础镜像，更新为 Debian Bullseye
+FROM python:3.11-slim-bullseye
 
 # 设置工作目录
 WORKDIR /app
 
+# 更换 Debian 镜像源为阿里云，以解决下载问题
+RUN cp /etc/apt/sources.list /etc/apt/sources.list.bak && \
+    echo "deb http://mirrors.aliyun.com/debian/ bullseye main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian/ bullseye-updates main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security/ bullseye-security main contrib non-free" >> /etc/apt/sources.list
+    # 移除了 bullseye-backports 仓库
+
 # 安装系统依赖，包括 OpenCV 所需的库
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    build-essential \
     libgl1-mesa-glx \
     libsm6 \
     libxext6 \
@@ -16,7 +24,7 @@ RUN apt-get update && \
 
 # 复制 requirements.txt 并安装 Python 依赖
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt --no-deps --platform linux/aarch64 --target /usr/local/lib/python3.11/site-packages
 
 ### RKNN SDK 运行时库集成 ###
 # 这一步需要您手动将 RKNN SDK 中适用于 RK3566 的运行时库文件
